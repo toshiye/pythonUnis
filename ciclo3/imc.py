@@ -1,105 +1,85 @@
-# _*_ coding: latin1 _*_
+# coding=utf8
 
-import wx
+from tkinter import *
 
-"""
-app = wx.App()
+def bt_calculo():
 
-frame = wx.Frame(None, -1, 'IMC', style= wx.MAXIMIZE_BOX | wx.CLOSE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.MINIMIZE_BOX)
+    num1 = float(ed3.get())
+    print(num1)
 
-frame.Show()
+    num2 = float(ed4.get())
+    print(num2)
 
-app.MainLoop()
-"""
+    imc = num2 / (num1 * num1)
+    print(imc)
 
-class WindowsClass(wx.Frame):
-    def __init__(self, *args, **kwargs):
-        super(WindowsClass, self).__init__(*args, **kwargs)
+    nome = ed1.get('1.0', END)
+    print(nome)
+    if (num1 and num2):
+        if(imc < 17.0):
+            lb5["text"] = nome + "Você está: \n" + "Muito abaixo do peso: Cade você?"
+        elif(imc >= 17.0 and imc < 18.49):
+            lb5["text"] =nome + "Você está: \n" + "Abaixo do peso: Você está abaixo do peso,\n melhor se cuidar."
+        elif(imc >= 18.5 and imc < 24.99):
+            lb5["text"] =nome + "Você está com: \n" + "Peso normal: Parabéns, você está com bom peso."
+        elif(imc >= 25.0 and imc < 29.99):
+            lb5["text"] =nome + "Você está: \n" + "Acima do peso: Cuidado, você está acima do peso."
+        elif(imc >= 30 and imc < 34.99):
+            lb5["text"] =nome + "Você está com: \n" + "Obesidade I: Você está Obeso, melhor começar\n um regime!"
+        elif(imc >= 35 and imc < 39.99):
+            lb5["text"] =nome + "Você está com: \n" + "Obesidade severa: É sério, sua Obesidade é SEVERA,\n ainda não começou o regime?"
+        elif(imc > 40):
+            lb5["text"] =nome + "Você está com: \n" + "Obesidade mórbida: Agora deu,\n Você não come mais nada\n até parecer a Gisele Bündchen!!!"
+    else:
+        lb5["text"] = "Valores informados inválidos!"
 
-        self.basic_gui()
-        #self.Move((800, 450))
-        #self.Centre()
-        #self.Show()
-    def basic_gui(self):
-        panel = wx.Panel(self)
+def btn_reset():
+    ed1.delete('1.0', END)
+    ed2.delete('1.0', END)
+    ed3.delete(first=0, last=1000)
+    ed4.delete(first=0, last=1000)
 
-        self.CreateStatusBar()
-        self.SetStatusText('Eu hein')
+def btn_close():
+    mainWindow.destroy()
 
-        menuBar = wx.MenuBar()
-        fileMenu = wx.Menu()
+mainWindow = Tk()
+mainWindow.title("Cálculo de IMC - Índice de Massa Corporal")
 
-        editMenu = wx.Menu()
+lb1 = Label(mainWindow, text="Nome do Paciente")
+lb1.place(x=30, y=30)
 
-        exitItem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit Application')
+ed1 = Text(mainWindow, height=1, width=48)
+ed1.place(x=170, y=30)
 
-        menuBar.Append(fileMenu, '&File')
-        menuBar.Append(editMenu, 'Edit')
+lb2 = Label(mainWindow, text="Endereço Completo")
+lb2.place(x=30, y=80)
 
-        nameDialog = wx.TextEntryDialog(None, 'Qual o seu nome?', 'Seja Bem vindo.', 'Beltrano')
+ed2 = Text(mainWindow, height=1, width=48)
+ed2.place(x=170, y=80)
 
-        if nameDialog.ShowModal() == wx.ID_OK:
-            username = nameDialog.GetValue()
+lb3 = Label(mainWindow, text="Altura (cm)")
+lb3.place(x=30, y=130)
 
-        nameDialog.Destroy()
+ed3 = Entry(mainWindow)
+ed3.place(x=170, y=130)
 
-        yesNoDialog = wx.MessageDialog(None, 'Isso est� funcionando %s?' %username, 'Pergunta', wx.YES_NO)
-        yesNoAnswer = yesNoDialog.ShowModal()
-        yesNoDialog.Destroy()
+lb4 = Label(mainWindow, text="Peso (kg)")
+lb4.place(x=30, y=180)
 
-        if yesNoAnswer == wx.ID_NO:
-            username = 'Perdedor!'
+ed4 = Entry(mainWindow)
+ed4.place(x=170, y=180)
 
-        chooseOneBox = wx.SingleChoiceDialog(None, 'Qual a sua cor favorita?', 'Questao de cor', ['yellow', 'blue', 'black', 'green'])
+lb5 = Label(mainWindow, text="Seu resultado aparecerá aqui...")
+lb5.place(x=320, y=130)
 
-        favColor = None
+bt = Button(mainWindow, text="CALCULAR", width=20, command=bt_calculo)
+bt.place(x=30, y=250)
 
-        if chooseOneBox.ShowModal() == wx.ID_OK:
-            favColor = chooseOneBox.GetStringSelection()
+bt = Button(mainWindow, text="Reiniciar", width=20, command=btn_reset)
+bt.place(x=200, y=250)
 
-        chooseOneBox.Destroy()
+bt = Button(mainWindow, text="Sair", width=20, command=btn_close)
+bt.place(x=370, y=250)
 
-        textArea = wx.TextCtrl(panel, pos=(3, 100), size=(200, 50))
-
-        if favColor:
-            textArea.AppendText('Sua cor favorita � o ' + favColor)
-
-        text = wx.StaticText(panel, -1, 'Cor legal', (3, 3))
-
-        text.SetForegroundColour('yellow')
-        text.SetBackgroundColour('black')
-
-        wx.Button(panel, 1, 'Close', (205, 130))
-        """
-        bmp = wx.Bitmap('closeButton.png')
-        button = wx.BitmapButton(
-            panel, id=1, bitmap=bmp, size=(bmp.GetWidth() + 10, bmp.GetHeight() + 10), pos=(210, 110)
-        )
-        """
-
-        aweText = wx.StaticText(panel, -1, 'Super customizado!', (3, 30))
-        aweText.SetForegroundColour(favColor)
-        aweText.SetBackgroundColour('black')
-
-        self.SetMenuBar(menuBar)
-        self.Bind(wx.EVT_MENU, self.onQuit, exitItem)
-
-        self.SetSize((800, 600))
-        #self.SetTitle('Calculo do IMC - �ndice de Massa Corporal')
-        self.SetTitle('Seja bem vindo ' + username)
-
-        self.Bind(wx.EVT_BUTTON, self.onQuit, id=1)
-
-
-        self.Centre()
-        self.Show(True)
-
-    def onQuit(self, e):
-        self.Close()
-
-def Main():
-    app = wx.App()
-    WindowsClass(None)
-    app.MainLoop()
-
-Main()
+mainWindow.geometry("600x300+600+200")
+mainWindow.mainloop()
