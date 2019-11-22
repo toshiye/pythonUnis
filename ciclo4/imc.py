@@ -3,8 +3,7 @@
 from tkinter import *
 import psycopg2
 
-#Conexão com o banco PostgreSQL
-
+#Início do bloco de Conexão com o banco PostgreSQL e criação do schema e da tabela
 try:
     connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
     cursor = connection.cursor()
@@ -34,7 +33,9 @@ finally:
         cursor.close()
         connection.close()
         print("Conexão com o banco encerrada")
+#Fim do bloco de Conexão com o banco PostgreSQL e criação do schema e da tabela
 
+#Início do bloco de Funções
 def bt_calculo():
 
     num1 = float(ed3.get())
@@ -108,6 +109,9 @@ def btn_save():
             connection.close()
             print("Conexão com o banco encerrada")
 
+#Fim do bloco de Funções
+
+#Início do bloco de criação da Interface de Usuário
 mainWindow = Tk()
 mainWindow.title("Cálculo de IMC - Índice de Massa Corporal")
 
@@ -152,3 +156,4 @@ bt.place(x=390, y=250)
 
 mainWindow.geometry("600x600+100+100")
 mainWindow.mainloop()
+#Fim do bloco de criação da Interface de Usuário
