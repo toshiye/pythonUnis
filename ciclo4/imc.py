@@ -77,6 +77,21 @@ def btn_reset():
 def btn_close():
     mainWindow.destroy()
 
+def pop_list():
+    try:
+        connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
+        cursor = connection.cursor()
+
+        select_query = ''' SELECT * FROM imcschema.imc; '''
+    except(Exception, psycopg2.Error) as error:
+        if (connection):
+            print('Não encontrei nada fera!!!', error)
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+            print("Conexão com o banco encerrada")
+
 def btn_save():
     try:
         connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
@@ -91,7 +106,6 @@ def btn_save():
 
         insert_query = '''INSERT INTO imcschema.imc (name, address, altura, peso, calculo, resultado) VALUES (%s, %s, %s, %s, %s, %s);'''
         record_to_insert = (name, address, altura, peso, calculo, resultado)
-        print(record_to_insert)
 
         cursor.execute(insert_query, record_to_insert)
 
