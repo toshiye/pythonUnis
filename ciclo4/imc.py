@@ -1,6 +1,7 @@
 # coding=utf8
 
 from tkinter import *
+from tkinter import ttk
 import psycopg2
 
 #Início do bloco de Conexão com o banco PostgreSQL e criação do schema e da tabela
@@ -77,12 +78,16 @@ def btn_reset():
 def btn_close():
     mainWindow.destroy()
 
-def pop_list():
+def pop_list(self):
+    list = ''
     try:
         connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
         cursor = connection.cursor()
 
-        select_query = ''' SELECT * FROM imcschema.imc; '''
+        select_query = ''' SELECT ('name', 'calculo', 'resultado') FROM imcschema.imc; '''
+
+        list = cursor.execute(select_query)
+
     except(Exception, psycopg2.Error) as error:
         if (connection):
             print('Não encontrei nada fera!!!', error)
@@ -91,6 +96,22 @@ def pop_list():
             cursor.close()
             connection.close()
             print("Conexão com o banco encerrada")
+
+    self.treeCons = ttk.Treeview(self.mainframe)
+
+    self.treeCons['columns'] = ('name', 'calculo', 'resultado')
+    self.treeCons.column('name', width=270)
+    self.treeCons.column('calculo', width=150)
+    self.treeCons.column('resultado', width=300)
+
+    self.treeCons.heading('name', text='Nome do Paciente')
+    self.treeCons.heading('calculo', text='Cálculo')
+    self.treeCons.heading('resultado', text='Resultado')
+
+    for l in list:
+        self.treeCons.insert(l.name, l.calculo, l.resultado)
+
+    self.treeCons.pack()
 
 def btn_save():
     try:
