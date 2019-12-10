@@ -1,6 +1,6 @@
 # coding=utf8
 
-from tkinter import *
+import tkinter as tk
 from tkinter import ttk
 import psycopg2
 
@@ -48,7 +48,7 @@ def bt_calculo():
     imc = num2 / (num1 * num1)
     print(imc)
 
-    nome = ed1.get('1.0', END)
+    nome = ed1.get('1.0', tk.END)
     print(nome)
     if (num1 and num2):
         if(imc < 17.0):
@@ -69,8 +69,8 @@ def bt_calculo():
         lb5["text"] = "Valores informados inválidos!"
 
 def btn_reset():
-    ed1.delete('1.0', END)
-    ed2.delete('1.0', END)
+    ed1.delete('1.0', tk.END)
+    ed2.delete('1.0', tk.END)
     ed3.delete(first=0, last=1000)
     ed4.delete(first=0, last=1000)
     lb5['text'] = ''
@@ -78,15 +78,21 @@ def btn_reset():
 def btn_close():
     mainWindow.destroy()
 
-def pop_list(self):
-    list = ''
+def pop_list():
     try:
-        connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
+        connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432",
+                                      database="imc")
         cursor = connection.cursor()
 
-        select_query = ''' SELECT ('name', 'calculo', 'resultado') FROM imcschema.imc; '''
+        cursor.execute('SELECT * FROM imcschema.imc')
 
-        list = cursor.execute(select_query)
+        rows = cursor.fetchall()
+
+        for row in rows:
+            print(row)
+
+            treeCons.insert("", tk.END, values=row)
+
 
     except(Exception, psycopg2.Error) as error:
         if (connection):
@@ -97,29 +103,13 @@ def pop_list(self):
             connection.close()
             print("Conexão com o banco encerrada")
 
-    self.treeCons = ttk.Treeview(self.mainframe)
-
-    self.treeCons['columns'] = ('name', 'calculo', 'resultado')
-    self.treeCons.column('name', width=270)
-    self.treeCons.column('calculo', width=150)
-    self.treeCons.column('resultado', width=300)
-
-    self.treeCons.heading('name', text='Nome do Paciente')
-    self.treeCons.heading('calculo', text='Cálculo')
-    self.treeCons.heading('resultado', text='Resultado')
-
-    for l in list:
-        self.treeCons.insert(l.name, l.calculo, l.resultado)
-
-    self.treeCons.pack()
-
 def btn_save():
     try:
         connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
         cursor = connection.cursor()
 
-        name = str(ed1.get('1.0', END)).replace('\n', '')
-        address = str(ed2.get('1.0', END)).replace('\n', '')
+        name = str(ed1.get('1.0', tk.END)).replace('\n', '')
+        address = str(ed2.get('1.0', tk.END)).replace('\n', '')
         altura = float(ed3.get())
         peso = float(ed4.get())
         calculo = float(ed4.get()) / (float(ed3.get()) ** 2)
@@ -144,51 +134,88 @@ def btn_save():
             connection.close()
             print("Conexão com o banco encerrada")
 
+def combine_funcs(*funcs):
+    def combined_func(*args, **kwargs):
+        for f in funcs:
+            f(*args, **kwargs)
+    return combined_func
+
 #Fim do bloco de Funções
 
 #Início do bloco de criação da Interface de Usuário
-mainWindow = Tk()
+mainWindow = tk.Tk()
 mainWindow.title("Cálculo de IMC - Índice de Massa Corporal")
 
-lb1 = Label(mainWindow, text="Nome do Paciente")
+lb1 = tk.Label(mainWindow, text="Nome do Paciente")
 lb1.place(x=30, y=30)
 
-ed1 = Text(mainWindow, height=1, width=48)
+ed1 = tk.Text(mainWindow, height=1, width=48)
 ed1.place(x=170, y=30)
 
-lb2 = Label(mainWindow, text="Endereço Completo")
+lb2 = tk.Label(mainWindow, text="Endereço Completo")
 lb2.place(x=30, y=80)
 
-ed2 = Text(mainWindow, height=1, width=48)
+ed2 = tk.Text(mainWindow, height=1, width=48)
 ed2.place(x=170, y=80)
 
-lb3 = Label(mainWindow, text="Altura (cm)")
+lb3 = tk.Label(mainWindow, text="Altura (cm)")
 lb3.place(x=30, y=130)
 
-ed3 = Entry(mainWindow)
+ed3 = tk.Entry(mainWindow)
 ed3.place(x=170, y=130)
 
-lb4 = Label(mainWindow, text="Peso (kg)")
+lb4 = tk.Label(mainWindow, text="Peso (kg)")
 lb4.place(x=30, y=180)
 
-ed4 = Entry(mainWindow)
+ed4 = tk.Entry(mainWindow)
 ed4.place(x=170, y=180)
 
-lb5 = Label(mainWindow, text="Seu resultado aparecerá aqui...")
+lb5 = tk.Label(mainWindow, text="Seu resultado aparecerá aqui...")
 lb5.place(x=320, y=130)
 
-bt = Button(mainWindow, text="CALCULAR", width=15, command=bt_calculo)
+bt = tk.Button(mainWindow, text="CALCULAR", width=15, command=bt_calculo)
 bt.place(x=30, y=250)
 
-bt = Button(mainWindow, text="Salvar", width=15, command=btn_save)
+bt = tk.Button(mainWindow, text="Salvar", width=15, command=combine_funcs(btn_save))
 bt.place(x=150, y=250)
 
-bt = Button(mainWindow, text="Reiniciar", width=15, command=btn_reset)
+bt = tk.Button(mainWindow, text="Lista", width=15, command=combine_funcs(pop_list))
 bt.place(x=270, y=250)
 
-bt = Button(mainWindow, text="Sair", width=15, command=btn_close)
+bt = tk.Button(mainWindow, text="Reiniciar", width=15, command=btn_reset)
 bt.place(x=390, y=250)
 
-mainWindow.geometry("600x600+100+100")
+bt = tk.Button(mainWindow, text="Sair", width=15, command=btn_close)
+bt.place(x=510, y=250)
+
+#def create_tree_view():
+treeCons = ttk.Treeview(mainWindow, columns=('id', 'name', 'address', 'altura', 'peso', 'calculo', 'resultado'), show='headings')
+
+# self.treeCons['columns'] = ('name', 'calculo', 'resultado')
+treeCons.heading('id', text='ID')
+treeCons.column('id', width=20)
+
+treeCons.heading('name', text='Nome do Paciente')
+treeCons.column('name', width=200)
+
+treeCons.heading('address', text='Endereço')
+treeCons.column('address', width=250)
+
+treeCons.heading('altura', text='Altura')
+treeCons.column('altura', width=40)
+
+treeCons.heading('peso', text='Peso')
+treeCons.column('peso', width=40)
+
+treeCons.heading('calculo', text='Cálculo')
+treeCons.column('calculo', width=50)
+
+treeCons.heading('resultado', text='Resultado')
+treeCons.column('resultado', width=750)
+
+
+treeCons.place(x=15, y=290)
+
+mainWindow.geometry("1385x600+100+100")
 mainWindow.mainloop()
 #Fim do bloco de criação da Interface de Usuário
