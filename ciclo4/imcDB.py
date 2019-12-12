@@ -6,7 +6,7 @@ import psycopg2
 
 #Início do bloco de Conexão com o banco PostgreSQL e criação do schema e da tabela
 try:
-    connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
+    connection = psycopg2.connect(user="", password="", host="localhost", port="5432", database="imc")
     cursor = connection.cursor()
 
     cursor.execute('''
@@ -40,16 +40,16 @@ finally:
 def bt_calculo():
 
     num1 = float(ed3.get())
-    print(num1)
+    #print(num1)
 
     num2 = float(ed4.get())
-    print(num2)
+    #print(num2)
 
     imc = num2 / (num1 * num1)
-    print(imc)
+    #print(imc)
 
     nome = ed1.get('1.0', tk.END)
-    print(nome)
+    #print(nome)
     if (num1 and num2):
         if(imc < 17.0):
             lb5["text"] = nome + " Você está: \n" + "Muito abaixo do peso: Cade você?"
@@ -79,6 +79,7 @@ def btn_close():
     mainWindow.destroy()
 
 def pop_list():
+    treeCons.delete(*treeCons.get_children())
     try:
         connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432",
                                       database="imc")
@@ -89,7 +90,7 @@ def pop_list():
         rows = cursor.fetchall()
 
         for row in rows:
-            print(row)
+            #print(row)
 
             treeCons.insert("", tk.END, values=row)
 
@@ -123,6 +124,8 @@ def btn_save():
         connection.commit()
 
         btn_reset()
+
+        pop_list()
 
         print('Dados inseridos com sucesso')
     except(Exception, psycopg2.Error) as error:
