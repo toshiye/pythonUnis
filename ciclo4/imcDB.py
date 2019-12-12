@@ -81,7 +81,7 @@ def btn_close():
 def pop_list():
     treeCons.delete(*treeCons.get_children())
     try:
-        connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432",
+        connection = psycopg2.connect(user="", password="", host="localhost", port="5432",
                                       database="imc")
         cursor = connection.cursor()
 
@@ -106,7 +106,7 @@ def pop_list():
 
 def btn_save():
     try:
-        connection = psycopg2.connect(user="postgres", password="Shigeyoshi@21", host="localhost", port="5432", database="imc")
+        connection = psycopg2.connect(user="", password="", host="localhost", port="5432", database="imc")
         cursor = connection.cursor()
 
         name = str(ed1.get('1.0', tk.END)).replace('\n', '')
